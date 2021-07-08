@@ -4,7 +4,7 @@
   <parent>
     <artifactId>ext-codeartifact</artifactId>
     <groupId>com.github.patlego.mvn</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <modules>
@@ -14,8 +14,14 @@
 
   <repositories>
     <repository>
-      <id>aftia-artifacts-aftia-internal</id>
+      <id>aftia-internal</id>
       <url>https://aftia-artifacts-282486032588.d.codeartifact.us-east-2.amazonaws.com/maven/aftia-internal/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
