@@ -1,17 +1,19 @@
 package com.github.patlego.mvn;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Server;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import org.slf4j.Logger;
 
-
-@Component(role = AbstractMavenLifecycleParticipant.class)
+@Component(role = AbstractMavenLifecycleParticipant.class, hint = "servers")
 public class CodeArtifactParticipant extends AbstractMavenLifecycleParticipant {
 
     @Requirement
@@ -19,15 +21,26 @@ public class CodeArtifactParticipant extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-        logger.info(String.format("%s - About to set the repository tag password to the appropriate value", Constants.EXT_NAME));
-        
-        logger.info(String.format("Current password is set too - %s", session.getSettings().getServer("aftia-internal").getPassword()));
-        session.getSettings().getServer("aftia-internal").setPassword("eyJ2ZXIiOjEsImlzdSI6MTYyNTc2ODYyMSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6ImtMay1pX0lveDBLRHVmU0xxTkFsTmciLCJleHAiOjE2MjU4MTE4MjEsImFsZyI6IkExMjhHQ01LVyIsIml2IjoieS1FaDk3VGs0MlpkMUNqRSJ9.YyEkTFydWoX5IL5XOFRSDw.W_eHA84AQIImGj6W.Kqj_-MOs9jEdxzq2FcBO12LCC9vKAngGKFrOnxH6JoZNr2EJsfBS8O-HwW8lj4QB6OIKQ3heyrHNddVw4a3dwbUh9Qjx2_G9TidZaKH5jHVBm6qQdFOwQ0iRyaKgUCpnvjiOnnB8TeE5AUwUpOYIDTqLSi9dZz5WQEUknvYxlSr2YCEP1vzhC4MknyQuktgsOFqJ5D4f49jIwyXApZdtFNtbGVqkt0s8mYOvqhJYSn3-cTgjlJVzOfWm3jm2nZBYmUdVIxY4Ot-hDf8KkqKNrK-ZKO6awfeLytDCj2bf5CkJjvt1JK6MyyUUnpORAPiOyN2vLL9KWjaxeB3tnBAtlbvOy6mVGb_LB9yazkFZahaUHkLBkIcSW-QYaQ-OGfiXRTcNhGDWQ5O0r-ysg_FUxWjHq2EjCB2s1rlc10EkWVBlpP3KcLwAG7R187lnt_bq_bvlkqrEEo_YziGTt9Qu9g2Y837rCh0c6qEsVTm0BCUHRri_qicwfHhhXT5jUzKun7SC7oc82EWnEW1wRRgKN-0W5lzbNUQxIbb5aMk-AI8ob8zrgvOe4EdOUJ1mHp9QNq8D9sds5Y68OBcuQzOYjSDWFkRQQiLW7QQSsG62hUfpRMC3Xh3_u8nHZ8Km5ZLPOTSDXXcjP0Xwe2vovvKhc2kkTADo8GRUXUypTx_Pd902op_dIXenaekQOA6PHF6-DhNUQOdPL8-xSEksCkS1NUNdfSvVIrqIorOtJAer--rF9YEmF34WTP3AlgtWvEqeCEqPLCf-EkHMNbqR3ZsGXbHtYXmxZuUuMmma34bFu7cGZBwvU5E_dLx3BsUGCeCMGkf8YF_E-E_HJ7x1qEEFdK93lexM4vVkfagCgDAWo6vhM90XvqCR11y5BKpjJygWtYqgPsE_8pCtmRrCC-Y1kMLAbNMOiLlX80WuJ0wf5ZTY5XB-GFw8IILIdA.SR-CNzTHHuc4LcUMbk7hGw");
-        logger.info(String.format("Current password is set too - %s", session.getSettings().getServer("aftia-internal").getPassword()));
-        logger.info(session.getSettings().getServer("aftia-internal").getUsername());
+        logger.info(String.format("%s - About to set the repository tag password to the appropriate value",
+                Constants.EXT_NAME));
 
-        session.getSettings().flushProfileMap();
-        session.getSettings().flushActiveProxy();
+        // for (Server server : session.getSettings().getServers()) {
+        //     logger.info("Found the " + server.getId());
+        //     server.setPassword(
+        //             "eyJ2ZXIiOjEsImlzdSI6MTYyNTc3MTUxNSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6InJKdUJEaGphOVdJQkRqV21wQWxhcVEiLCJleHAiOjE2MjU4MTQ3MTUsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiUkZaMHIwbWNaWWY3OHlwMiJ9.z_YjYMoCBSwxr_l3lNqoUg.lZNrbc5yuh2FHBRt.sJ4D08WWoRHFQy2ZvvFkpPRR3LrqEdycykaAtKip2nOuSzDL7NTMi8VsQZdkPe5BsLhc86suK99cu4np8YP1iVL_Rgz6STlnqJH1DgttynAiIUFFQsePcfrybS7-Sbgyd1UkVKNw2i6PCWcrtHYO2wZT1y1BRP_8KWnJkgjovT5rv_GnKo2k9ptjXTS4gl6Y2pI1dLEXKavPi7mYNoXIbVKDkcY16Ys_JpqS-bVA6tN183lpNTNpfV8Vo0eAV6jF0YJ9-VgASR8_hLPxtFTR8dsjkLeKFZWZ8J3aGiNyWxYSA6uI77xQVGI_LFrqDWCDFHDdz923zkiL_S8oCbq-61DjDwTzp8bxLVuLAytXTfNnGoms0cAlYRYXiJ1IejmthlcrWanr0aKCr5un3eVZd98dA1GCNMqedGBsoGh6tfMcILCpbrf6ErPgHpJUrl_Ky9C9OwikxlDA2VQx2aLmVO_VF-HhAiTS_8K5RVqZQ-zOawAE_npR-HVNBpsHL33xfeyZDv96p4dOLjxK81XD7lluhUDxr5hhEba85kD4UZ-mb7OslkxVGpJTKJYr2jge-MrzuA0wKcc3NbSvDkKv110nhwQh-mUIPEvGYBUaA1L0TwPaGCQqcCrhLsOavc0idcn8ATnHWvhG7ts8AvG7u_e54W9pNutqbYAbOAUCpOYRY97hzqtMx3Y63xBhPIMCs8vPW7Rdl1PAOq8AlEU9krgMggLLV8k02eH7iy0HMIj7WC36NHT7VZnfONwz-g77ZVcT-vpS4Cxau6xSZ8caGsEsKcz33vAUBUP0xDszO7YQocvFH4MbRUHO8kPVfC_4B6QXLiSsMtSGq2XRbHn4KYqH8CKAWGGKjOYG3NFBG0oXZIvU3NS_vehsf5aDkTd3Crjk-4ZFiw6yQeAvp-ldS0WfDiUwhvnTjMJjrRlM6EWsNw8tJ56JjQ._uuBV6rnnz9wNzkMxcj7TQ");
+        // }
+        logger.info(session.getSystemProperties().getProperty("ext.pwd"));
+        session.getSystemProperties().setProperty("ext.pwd", "eyJ2ZXIiOjEsImlzdSI6MTYyNTc3MTUxNSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6InJKdUJEaGphOVdJQkRqV21wQWxhcVEiLCJleHAiOjE2MjU4MTQ3MTUsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiUkZaMHIwbWNaWWY3OHlwMiJ9.z_YjYMoCBSwxr_l3lNqoUg.lZNrbc5yuh2FHBRt.sJ4D08WWoRHFQy2ZvvFkpPRR3LrqEdycykaAtKip2nOuSzDL7NTMi8VsQZdkPe5BsLhc86suK99cu4np8YP1iVL_Rgz6STlnqJH1DgttynAiIUFFQsePcfrybS7-Sbgyd1UkVKNw2i6PCWcrtHYO2wZT1y1BRP_8KWnJkgjovT5rv_GnKo2k9ptjXTS4gl6Y2pI1dLEXKavPi7mYNoXIbVKDkcY16Ys_JpqS-bVA6tN183lpNTNpfV8Vo0eAV6jF0YJ9-VgASR8_hLPxtFTR8dsjkLeKFZWZ8J3aGiNyWxYSA6uI77xQVGI_LFrqDWCDFHDdz923zkiL_S8oCbq-61DjDwTzp8bxLVuLAytXTfNnGoms0cAlYRYXiJ1IejmthlcrWanr0aKCr5un3eVZd98dA1GCNMqedGBsoGh6tfMcILCpbrf6ErPgHpJUrl_Ky9C9OwikxlDA2VQx2aLmVO_VF-HhAiTS_8K5RVqZQ-zOawAE_npR-HVNBpsHL33xfeyZDv96p4dOLjxK81XD7lluhUDxr5hhEba85kD4UZ-mb7OslkxVGpJTKJYr2jge-MrzuA0wKcc3NbSvDkKv110nhwQh-mUIPEvGYBUaA1L0TwPaGCQqcCrhLsOavc0idcn8ATnHWvhG7ts8AvG7u_e54W9pNutqbYAbOAUCpOYRY97hzqtMx3Y63xBhPIMCs8vPW7Rdl1PAOq8AlEU9krgMggLLV8k02eH7iy0HMIj7WC36NHT7VZnfONwz-g77ZVcT-vpS4Cxau6xSZ8caGsEsKcz33vAUBUP0xDszO7YQocvFH4MbRUHO8kPVfC_4B6QXLiSsMtSGq2XRbHn4KYqH8CKAWGGKjOYG3NFBG0oXZIvU3NS_vehsf5aDkTd3Crjk-4ZFiw6yQeAvp-ldS0WfDiUwhvnTjMJjrRlM6EWsNw8tJ56JjQ._uuBV6rnnz9wNzkMxcj7TQ");
+        logger.info(session.getSystemProperties().getProperty("ext.pwd"));
+        
+        // for (MavenProject project : session.getAllProjects()) {
+        //     project.getProperties().put("settings.servers.aftia-internal.password",
+        //             "eyJ2ZXIiOjEsImlzdSI6MTYyNTc3MTUxNSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6InJKdUJEaGphOVdJQkRqV21wQWxhcVEiLCJleHAiOjE2MjU4MTQ3MTUsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiUkZaMHIwbWNaWWY3OHlwMiJ9.z_YjYMoCBSwxr_l3lNqoUg.lZNrbc5yuh2FHBRt.sJ4D08WWoRHFQy2ZvvFkpPRR3LrqEdycykaAtKip2nOuSzDL7NTMi8VsQZdkPe5BsLhc86suK99cu4np8YP1iVL_Rgz6STlnqJH1DgttynAiIUFFQsePcfrybS7-Sbgyd1UkVKNw2i6PCWcrtHYO2wZT1y1BRP_8KWnJkgjovT5rv_GnKo2k9ptjXTS4gl6Y2pI1dLEXKavPi7mYNoXIbVKDkcY16Ys_JpqS-bVA6tN183lpNTNpfV8Vo0eAV6jF0YJ9-VgASR8_hLPxtFTR8dsjkLeKFZWZ8J3aGiNyWxYSA6uI77xQVGI_LFrqDWCDFHDdz923zkiL_S8oCbq-61DjDwTzp8bxLVuLAytXTfNnGoms0cAlYRYXiJ1IejmthlcrWanr0aKCr5un3eVZd98dA1GCNMqedGBsoGh6tfMcILCpbrf6ErPgHpJUrl_Ky9C9OwikxlDA2VQx2aLmVO_VF-HhAiTS_8K5RVqZQ-zOawAE_npR-HVNBpsHL33xfeyZDv96p4dOLjxK81XD7lluhUDxr5hhEba85kD4UZ-mb7OslkxVGpJTKJYr2jge-MrzuA0wKcc3NbSvDkKv110nhwQh-mUIPEvGYBUaA1L0TwPaGCQqcCrhLsOavc0idcn8ATnHWvhG7ts8AvG7u_e54W9pNutqbYAbOAUCpOYRY97hzqtMx3Y63xBhPIMCs8vPW7Rdl1PAOq8AlEU9krgMggLLV8k02eH7iy0HMIj7WC36NHT7VZnfONwz-g77ZVcT-vpS4Cxau6xSZ8caGsEsKcz33vAUBUP0xDszO7YQocvFH4MbRUHO8kPVfC_4B6QXLiSsMtSGq2XRbHn4KYqH8CKAWGGKjOYG3NFBG0oXZIvU3NS_vehsf5aDkTd3Crjk-4ZFiw6yQeAvp-ldS0WfDiUwhvnTjMJjrRlM6EWsNw8tJ56JjQ._uuBV6rnnz9wNzkMxcj7TQ");
+
+        //             project.getProperties().put("settings.servers.server.aftia-internal.password",
+        //             "eyJ2ZXIiOjEsImlzdSI6MTYyNTc3MTUxNSwiZW5jIjoiQTEyOEdDTSIsInRhZyI6InJKdUJEaGphOVdJQkRqV21wQWxhcVEiLCJleHAiOjE2MjU4MTQ3MTUsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiUkZaMHIwbWNaWWY3OHlwMiJ9.z_YjYMoCBSwxr_l3lNqoUg.lZNrbc5yuh2FHBRt.sJ4D08WWoRHFQy2ZvvFkpPRR3LrqEdycykaAtKip2nOuSzDL7NTMi8VsQZdkPe5BsLhc86suK99cu4np8YP1iVL_Rgz6STlnqJH1DgttynAiIUFFQsePcfrybS7-Sbgyd1UkVKNw2i6PCWcrtHYO2wZT1y1BRP_8KWnJkgjovT5rv_GnKo2k9ptjXTS4gl6Y2pI1dLEXKavPi7mYNoXIbVKDkcY16Ys_JpqS-bVA6tN183lpNTNpfV8Vo0eAV6jF0YJ9-VgASR8_hLPxtFTR8dsjkLeKFZWZ8J3aGiNyWxYSA6uI77xQVGI_LFrqDWCDFHDdz923zkiL_S8oCbq-61DjDwTzp8bxLVuLAytXTfNnGoms0cAlYRYXiJ1IejmthlcrWanr0aKCr5un3eVZd98dA1GCNMqedGBsoGh6tfMcILCpbrf6ErPgHpJUrl_Ky9C9OwikxlDA2VQx2aLmVO_VF-HhAiTS_8K5RVqZQ-zOawAE_npR-HVNBpsHL33xfeyZDv96p4dOLjxK81XD7lluhUDxr5hhEba85kD4UZ-mb7OslkxVGpJTKJYr2jge-MrzuA0wKcc3NbSvDkKv110nhwQh-mUIPEvGYBUaA1L0TwPaGCQqcCrhLsOavc0idcn8ATnHWvhG7ts8AvG7u_e54W9pNutqbYAbOAUCpOYRY97hzqtMx3Y63xBhPIMCs8vPW7Rdl1PAOq8AlEU9krgMggLLV8k02eH7iy0HMIj7WC36NHT7VZnfONwz-g77ZVcT-vpS4Cxau6xSZ8caGsEsKcz33vAUBUP0xDszO7YQocvFH4MbRUHO8kPVfC_4B6QXLiSsMtSGq2XRbHn4KYqH8CKAWGGKjOYG3NFBG0oXZIvU3NS_vehsf5aDkTd3Crjk-4ZFiw6yQeAvp-ldS0WfDiUwhvnTjMJjrRlM6EWsNw8tJ56JjQ._uuBV6rnnz9wNzkMxcj7TQ");
+
+        // }
     }
 
     @Override
