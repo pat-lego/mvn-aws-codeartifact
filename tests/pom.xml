@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>ext-codeartifact</artifactId>
+    <groupId>com.github.patlego.mvn</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <modules>
+    <module>tests.sample</module>
+    <module>tests.resolver</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>aftia-artifacts-aftia-internal</id>
+      <url>https://aftia-artifacts-282486032588.d.codeartifact.us-east-2.amazonaws.com/maven/aftia-internal/</url>
+    </repository>
+  </repositories>
+
+  <groupId>com.github.patlego.mvn</groupId>
+  <artifactId>tests</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Maven CodeArtifact Extension Tests</name>
+
+</project> 
