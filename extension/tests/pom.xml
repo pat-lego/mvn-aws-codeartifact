@@ -9,7 +9,7 @@
 
   <modules>
     <module>tests.sample</module>
-    <module>tests.resolver</module>
+    <!-- <module>tests.resolver</module> -->
   </modules>
 
   <repositories>
