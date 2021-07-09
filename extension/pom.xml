@@ -25,7 +25,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.8.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.plexus</groupId>
@@ -51,12 +51,12 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>3.6.3</version>
+        <version>3.8.1</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-annotations</artifactId>
-        <version>2.1.0</version>
+        <version>1.7.1</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
