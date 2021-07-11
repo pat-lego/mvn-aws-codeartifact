@@ -1,31 +1,16 @@
-https://github.com/jvanzyl/provisio/blob/master/pom.xml#L184
+# Maven Code Artifact Update
 
-https://github.com/jvanzyl/provisio/blob/master/provisio-maven-plugin/src/main/java/ca/vanzyl/maven/plugins/provisio/ProvisioningLifecycleParticipant.java
+In order to update the CodeArtifact token simply perform the following
 
-@Component(role = AbstractMavenLifecycleParticipant.class, hint = "mvn-settings-enricher")
-public class SettingsRefresher extends AbstractMavenLifecycleParticipant {
-    @Override
-    public void afterProjectsRead(final MavenSession session) {
-        final var settings = session.getSettings();
-        final var server = new Server();
-        server.setId("sample-injected-server");
-        server.setUsername("sample");
-        server.setPassphrase("sampl3");
-        settings.addServer(server);
-    }
-}
-and create a META-INF/plexus/components.xml with:
-<?xml version="1.0" encoding="UTF-8"?>
-<component-set>
-  <components>
-    <component>
-      <role>org.apache.maven.AbstractMavenLifecycleParticipant</role>
-      <role-hint>mvn-settings-enricher</role-hint>
-      <implementation>com.company.SettingsRefresher</implementation>
-      <description />
-      <isolated-realm>false</isolated-realm>
-    </component>
-  </components>
-</component-set>
+1. Install AWS CLI on your machine
+  - https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html
+2. Configure it accordingly 
+  - https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+3. Add the server to the settings.xml file
+4. Reference the following token `${env.CODEARTIFACT_AUTH_TOKEN}`
+5. Create a file called `.mavenrc` under `~/`
+6. Add the following code to the file
+```
+export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain [domain] --domain-owner [domain_owner] --query authorizationToken --output text`
+```
 
-https://maven.apache.org/plugins/maven-help-plugin/effective-settings-mojo.html
